@@ -1,5 +1,5 @@
 <?php
-	// Getting data from URL.
+	// 1) Getting data from URL.
 
 	$retrievedData = file_get_contents("https://mixtech.dev/neiro-bit/beeline/?LOGIN=zin.yar@mail.ru&PASSWORD=vjz2Adh");
 
@@ -24,8 +24,9 @@
 	echo $TIME_KEY . '<br>';
 	echo $TEST . '<br>';*/
 
+
 	
-	// Writing data to db.
+	// 2) Writing data to db.
 
 	$host = 'localhost';
 	$user = 'root';
@@ -52,14 +53,18 @@
 
 		mysqli_query($connection, $query);
 
+		// mysqli_close($connection);
+
+
+
+		// 3) Visualizing data.
+
 		$array = array(1, 2, 3);
 
 		/*while ($row = mysql_fetch_array($array[1, 2, 3]))
 		{
 			$data[] = $row['value'];
 		}*/
-
-		mysqli_close($connection);
 	}
 ?>
 
@@ -82,9 +87,13 @@
 				charts: {
 					renderTo: 'container'
 				},
-				series: [{}]
+				series: [{
+					data: [<?php echo 1 ?>],
+					pointStart: 0,
+         			pointInterval
+				}]
 			};
-		})
+		});
 	</script>
 </body>
 </html>
