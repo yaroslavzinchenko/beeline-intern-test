@@ -92,6 +92,11 @@
 			array_push($timeStampArray, $timeEntity);
 		}
 
+		$query = 'SELECT COUNT(*) FROM data;';
+
+		$rowCount = mysqli_fetch_all(mysqli_query($connection, $query));
+		// echo $rowCount[0][0];
+
 		// Beeline.
 
 		$query = 'SELECT BEELINE_VALUE FROM data;';
@@ -100,15 +105,32 @@
 
 		// Megafon.
 
-		$query = 'SELECT MF_VALUE FROM data;';
+		// $query = 'SELECT MF_VALUE FROM data;';
 
-		$MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+		// $MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
 
 		// MTS.
 
-		$query = 'SELECT MTS_VALUE FROM data;';
+		// $query = 'SELECT MTS_VALUE FROM data;';
 
-		$MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+		// $MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+
+		
+		$sum = 0;
+                			foreach ($BEELINE_VALUE_ALL as $value)
+							{
+								if ($sum == $rowCount[0][0] - 1)
+								{
+									echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . ']';
+								}
+								else
+								{
+									echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . '],';
+								$sum++;
+								}
+							};
+
+
 	}
 ?>
 
@@ -152,12 +174,10 @@
                 	name: 'BEELINE_VALUE',
                 	data: [
                 		<?php
-                			$sum = 0;
                 			foreach ($BEELINE_VALUE_ALL as $value)
-							{
-								echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . '],';
-								$sum++;
-							};
+                			{
+                				echo $value[0] . ',';
+                			};
                 		?>
                 	]
             	}
