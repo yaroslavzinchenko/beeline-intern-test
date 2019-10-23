@@ -126,7 +126,7 @@
 								else
 								{
 									echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . '],';
-								$sum++;
+									$sum++;
 								}
 							};
 
@@ -159,10 +159,13 @@
             	},
             	
             	xAxis: {
-                	type: 'datetime',
-                	labels: {
-                		format: '{value:%Y-%b-%e %H:%M:%S}'
-                	}
+            		tickInterval: 24 * 3600 * 1000, // One day.
+            		tickWidth: 0,
+            		gridLineWidth: 1
+                	// type: 'datetime',
+                	// labels: {
+                	// 	format: '{value:%Y-%b-%e %H:%M:%S}'
+                	// }
             	},
             	yAxis: {
                 	title: {
@@ -174,9 +177,18 @@
                 	name: 'BEELINE_VALUE',
                 	data: [
                 		<?php
+                			$sum = 0;
                 			foreach ($BEELINE_VALUE_ALL as $value)
                 			{
-                				echo $value[0] . ',';
+                				if ($sum == $rowCount[0][0] - 1)
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . ']';
+                				}
+                				else
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . '],';
+                					$sum++;
+                				}
                 			};
                 		?>
                 	]
