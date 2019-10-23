@@ -11,18 +11,18 @@
 	$BEELINE_VALUE = $arrayOfRetrievedData['data']['BEELINE_VALUE'];
 	$MF_VALUE = $arrayOfRetrievedData['data']['MF_VALUE'];
 	$MTS_VALUE = $arrayOfRetrievedData['data']['MTS_VALUE'];
-	$TIME_KEY = $arrayOfRetrievedData['data']['MF_VALUE'];
+	$TIME_KEY = $arrayOfRetrievedData['data']['TIME_KEY'];
 	$TEST = $arrayOfRetrievedData['data']['TEST'];
 
 
 	// Debugging.
-	/*echo $status . '<br>';
-	echo $USER_EMAIL . '<br>';
-	echo $BEELINE_VALUE . '<br>';
-	echo $MF_VALUE . '<br>';
-	echo $MTS_VALUE . '<br>';
-	echo $TIME_KEY . '<br>';
-	echo $TEST . '<br>';*/
+	// echo $status . '<br>';
+	// echo $USER_EMAIL . '<br>';
+	// echo $BEELINE_VALUE . '<br>';
+	// echo $MF_VALUE . '<br>';
+	// echo $MTS_VALUE . '<br>';
+	// echo $TIME_KEY . '<br>';
+	// echo $TEST . '<br>';
 
 
 	
@@ -59,12 +59,56 @@
 
 		// 3) Visualizing data.
 
-		$array = array(1, 2, 3);
+		// Beeline average.
 
-		/*while ($row = mysql_fetch_array($array[1, 2, 3]))
+		$query = 'SELECT AVG(BEELINE_VALUE) FROM data;';
+
+		$BEELINE_VALUE_AVERAGE = mysqli_fetch_row(mysqli_query($connection, $query));
+
+		// MegaFon average.
+
+		$query = 'SELECT AVG(MF_VALUE) FROM data;';
+
+		$MF_VALUE_AVERAGE = mysqli_fetch_row(mysqli_query($connection, $query));
+
+		// MTS average.
+
+		$query = 'SELECT AVG(MTS_VALUE) FROM data;';
+
+		$MTS_VALUE_AVERAGE = mysqli_fetch_row(mysqli_query($connection, $query));
+
+
+		$queryTimeKey = 'SELECT TIME_KEY FROM data';
+
+		$timeKeyAll = mysqli_fetch_all(mysqli_query($connection, $queryTimeKey));
+
+		$timeStampArray = [];
+
+		foreach ($timeKeyAll as $timeEntity)
 		{
-			$data[] = $row['value'];
-		}*/
+			$timeEntity = strtotime($timeEntity[0]);
+			$timeEntity += 21600;
+			$timeEntity *= 1000;
+			array_push($timeStampArray, $timeEntity);
+		}
+
+		// Beeline.
+
+		$query = 'SELECT BEELINE_VALUE FROM data;';
+
+		$BEELINE_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+
+		// Megafon.
+
+		$query = 'SELECT MF_VALUE FROM data;';
+
+		$MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+
+		// MTS.
+
+		$query = 'SELECT MTS_VALUE FROM data;';
+
+		$MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
 	}
 ?>
 
@@ -82,18 +126,45 @@
 <body>
 	<div id="container" style="width:100%; height:400px;"></div>
 	<script>
-		$(document).read(function(){
-			var options = {
-				charts: {
-					renderTo: 'container'
-				},
-				series: [{
-					data: [<?php echo 1 ?>],
-					pointStart: 0,
-         			pointInterval
-				}]
-			};
-		});
+		document.addEventListener('DOMContentLoaded', function () {
+        	var myChart = Highcharts.chart('container', {
+            	chart: {
+                	type: 'line'
+            	},
+
+            	title: {
+                	text: 'Средние значения (все данные)'
+            	},
+            	
+            	xAxis: {
+                	type: 'datetime',
+                	labels: {
+                		format: '{value:%Y-%b-%e %H:%M:%S}'
+                	}
+            	},
+            	yAxis: {
+                	title: {
+                    	text: 'Значение'
+                	}
+            	},
+
+            	series: [{
+                	name: 'BEELINE_VALUE',
+                	data: [
+                		<?php
+                			$sum = 0;
+                			foreach ($BEELINE_VALUE_ALL as $value)
+							{
+								echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . '],';
+								$sum++;
+							};
+                		?>
+                	]
+            	}
+            	]
+
+        	});
+    	});
 	</script>
 </body>
 </html>
