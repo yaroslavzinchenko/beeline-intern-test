@@ -61,9 +61,12 @@
 
 		// Beeline average.
 
+		// $query = 'SELECT AVG(BEELINE_VALUE) FROM data WHERE INTERVAL 1 DAY';
+
 		$query = 'SELECT AVG(BEELINE_VALUE) FROM data;';
 
 		$BEELINE_VALUE_AVERAGE = mysqli_fetch_row(mysqli_query($connection, $query));
+		print_r($BEELINE_VALUE_AVERAGE);
 
 		// MegaFon average.
 
@@ -95,7 +98,6 @@
 		$query = 'SELECT COUNT(*) FROM data;';
 
 		$rowCount = mysqli_fetch_all(mysqli_query($connection, $query));
-		// echo $rowCount[0][0];
 
 		// Beeline.
 
@@ -105,32 +107,15 @@
 
 		// Megafon.
 
-		// $query = 'SELECT MF_VALUE FROM data;';
+		$query = 'SELECT MF_VALUE FROM data;';
 
-		// $MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
+		$MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
 
 		// MTS.
 
-		// $query = 'SELECT MTS_VALUE FROM data;';
+		$query = 'SELECT MTS_VALUE FROM data;';
 
-		// $MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
-
-		
-		$sum = 0;
-                			foreach ($BEELINE_VALUE_ALL as $value)
-							{
-								if ($sum == $rowCount[0][0] - 1)
-								{
-									echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . ']';
-								}
-								else
-								{
-									echo '[' . $timeStampArray[$sum] . ', ' . $value[0] . '],';
-									$sum++;
-								}
-							};
-
-
+		$MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $query));
 	}
 ?>
 
@@ -146,10 +131,19 @@
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
-	<div id="container" style="width:100%; height:400px;"></div>
+	<select id="graphSelector">
+		<option value="containerAll">Все данные</option>
+		<option value="containerMinutes">По минутам</option>
+		<option value="containerHours">По часам</option>
+		<option value="containerDays">По дням</option>
+	</select>
+
+	<div id="containerAll" class="graphs" style="width:100%; height:400px;"></div>
+	<div id="containerMinutes" class="graphs" style="display: none; width:100%; height:400px;"></div>
+	
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-        	var myChart = Highcharts.chart('container', {
+        	var myChart = Highcharts.chart('containerAll', {
             	chart: {
                 	type: 'line'
             	},
@@ -159,13 +153,10 @@
             	},
             	
             	xAxis: {
-            		tickInterval: 24 * 3600 * 1000, // One day.
-            		tickWidth: 0,
-            		gridLineWidth: 1
-                	// type: 'datetime',
-                	// labels: {
-                	// 	format: '{value:%Y-%b-%e %H:%M:%S}'
-                	// }
+                	type: 'datetime',
+                	labels: {
+                		format: '{value:%Y-%b-%e %H:%M:%S}'
+                	}
             	},
             	yAxis: {
                 	title: {
@@ -192,11 +183,86 @@
                 			};
                 		?>
                 	]
+            	}, {
+            		name: 'MF_VALUE',
+            		data: [
+            			<?php
+                			$sum = 0;
+                			foreach ($MF_VALUE_ALL as $value)
+                			{
+                				if ($sum == $rowCount[0][0] - 1)
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . ']';
+                				}
+                				else
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . '],';
+                					$sum++;
+                				}
+                			};
+                		?>
+            		]
+            	}, {
+            		name: 'MTS_VALUE',
+            		data: [
+            			<?php
+                			$sum = 0;
+                			foreach ($MTS_VALUE_ALL as $value)
+                			{
+                				if ($sum == $rowCount[0][0] - 1)
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . ']';
+                				}
+                				else
+                				{
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . '],';
+                					$sum++;
+                				}
+                			};
+                		?>
+            		]
             	}
             	]
 
         	});
     	});
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('containerMinutes', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Fruit Consumption'
+            },
+            xAxis: {
+                categories: ['Apples', 'Bananas', 'Oranges']
+            },
+            yAxis: {
+                title: {
+                    text: 'Fruit eaten'
+                }
+            },
+            series: [{
+                name: 'Jane',
+                data: [1, 0, 4]
+            }, {
+                name: 'John',
+                data: [5, 7, 3]
+            }]
+        });
+    });
+	</script>
+	<script>
+		$(function()
+		{
+    		$('#graphSelector').change(function ()
+    		{
+        		$('.graphs').hide();
+        		$('#' + $(this).val()).show();
+    		});
+		});
 	</script>
 </body>
 </html>
