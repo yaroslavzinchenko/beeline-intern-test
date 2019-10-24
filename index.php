@@ -62,7 +62,7 @@
 		foreach ($timeKeyAll as $timeEntity)
 		{
 			$timeEntity = strtotime($timeEntity[0]);
-			$timeEntity += 21600;
+			$timeEntity += 10800;
 			$timeEntity *= 1000;
 			array_push($timeStampArray, $timeEntity);
 		}
@@ -306,6 +306,7 @@
 							$time = $beelineMinute[0] . ' ' . $beelineMinute[1] . ':' . $beelineMinute[2];
 
 							$timeEntity = strtotime($time);
+							$timeEntity += 10800;
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
@@ -326,6 +327,7 @@
 							$time = $megafonMinute[0] . ' ' . $megafonMinute[1] . ':' . $megafonMinute[2];
 
 							$timeEntity = strtotime($time);
+							$timeEntity += 10800;
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
@@ -346,6 +348,7 @@
 							$time = $mtsMinute[0] . ' ' . $mtsMinute[1] . ':' . $mtsMinute[2];
 
 							$timeEntity = strtotime($time);
+							$timeEntity += 10800;
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
