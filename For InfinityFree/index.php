@@ -28,10 +28,10 @@
 	
 	// 2) Writing data to db.
 
-	$host = 'localhost';
-	$user = 'root';
-	$password = 'password';
-	$database = 'beeline-intern-test';
+	$host = 'sql302.epizy.com';
+	$user = 'epiz_24470955';
+	$password = '8EXN7pWTd7nqDhj';
+	$database = 'epiz_24470955_beelineInternTest';
 
 	$connection = mysqli_connect($host, $user, $password, $database);
 
@@ -71,47 +71,86 @@
 
 		$rowCount = mysqli_fetch_all(mysqli_query($connection, $queryRowCount));
 
-        // Retrieving all data for all operators in one query.
+		// Beeline.
 
-        $queryAll = 'SELECT BEELINE_VALUE, MF_VALUE, MTS_VALUE FROM data;';
+		$queryBeelineAll = 'SELECT BEELINE_VALUE FROM data;';
 
-        $VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $queryAll));
+		$BEELINE_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $queryBeelineAll));
 
+		// MegaFon.
 
+		$queryMegafonAll = 'SELECT MF_VALUE FROM data;';
 
-        // Retrieving daily data for all operators in one query.
+		$MF_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $queryMegafonAll));
 
-        $queryDays = 'SELECT DATE(TIME_KEY) AS date,
-                            SUM(BEELINE_VALUE) AS beeline_value,
-                            SUM(MF_VALUE) AS mf_value,
-                            SUM(MTS_VALUE) AS mts_value,
-                            COUNT(*) AS count
-                            FROM data
-                            GROUP BY date;';
+		// MTS.
 
-        $allDays = mysqli_fetch_all(mysqli_query($connection, $queryDays));
+		$queryMtsAll = 'SELECT MTS_VALUE FROM data;';
+
+		$MTS_VALUE_ALL = mysqli_fetch_all(mysqli_query($connection, $queryMtsAll));
 
 
 
+		// Beeline.
+		$queryBeelineDays = 'SELECT DATE(TIME_KEY) AS date,
+							SUM(BEELINE_VALUE) AS total_value,
+							COUNT(*) AS count
+							FROM data
+							GROUP BY date;';
 
-        // Retrieving minute data for all operators in one query.
+		$beelineDays = mysqli_fetch_all(mysqli_query($connection, $queryBeelineDays));
 
-        $queryMinutes = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, MINUTE(TIME_KEY) AS minute, SUM(BEELINE_VALUE) AS beeline_value, SUM(MF_VALUE) AS mf_value, SUM(MTS_VALUE) AS mts_value, COUNT(*) AS count FROM data GROUP BY date, hour, minute;';
+		// MegaFon.
+		$queryMegafonDays = 'SELECT DATE(TIME_KEY) AS date,
+							SUM(MF_VALUE) AS total_value,
+							COUNT(*) AS count
+							FROM data
+							GROUP BY date;';
 
-        $allMinutes = mysqli_fetch_all(mysqli_query($connection, $queryMinutes));
+		$megafonDays = mysqli_fetch_all(mysqli_query($connection, $queryMegafonDays));
+
+		// MTS.
+		$queryMtsDays = 'SELECT DATE(TIME_KEY) AS date,
+							SUM(MTS_VALUE) AS total_value,
+							COUNT(*) AS count
+							FROM data
+							GROUP BY date;';
+
+		$mtsDays = mysqli_fetch_all(mysqli_query($connection, $queryMtsDays));
 
 
 
-        // Retrieving hourly data for all operators in one query.
+		// Beeline.
+		$queryBeelineMinutes = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, MINUTE(TIME_KEY) AS minute, SUM(BEELINE_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour, minute;';
 
-        $queryHours = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour,
-        SUM(BEELINE_VALUE) AS beeline_value,
-        SUM(MF_VALUE) AS mf_value,
-        SUM(MTS_VALUE) AS mts_value,
-        COUNT(*) AS count FROM data GROUP BY date, hour;';
+		$beelineMinutes = mysqli_fetch_all(mysqli_query($connection, $queryBeelineMinutes));
 
-        $allHours = mysqli_fetch_all(mysqli_query($connection, $queryHours));
-        echo $allHours[0][0];
+		// Megafon.
+		$queryMegafonMinutes = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, MINUTE(TIME_KEY) AS minute, SUM(MF_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour, minute;';
+
+		$megafonMinutes = mysqli_fetch_all(mysqli_query($connection, $queryMegafonMinutes));
+
+		// MTS.
+		$queryMtsMinutes = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, MINUTE(TIME_KEY) AS minute, SUM(MTS_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour, minute;';
+
+		$mtsMinutes = mysqli_fetch_all(mysqli_query($connection, $queryMtsMinutes));
+
+
+
+		// Beeline.
+		$queryBeelineHours = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, SUM(BEELINE_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour;';
+
+		$beelineHours = mysqli_fetch_all(mysqli_query($connection, $queryBeelineHours));
+
+		// MegaFon.
+		$queryMegafonHours = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, SUM(MF_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour;';
+
+		$megafonHours = mysqli_fetch_all(mysqli_query($connection, $queryMegafonHours));
+
+		// MTS.
+		$queryMtsHours = 'SELECT DATE(TIME_KEY) AS date, HOUR(TIME_KEY) AS hour, SUM(MTS_VALUE) AS total_value, COUNT(*) AS count FROM data GROUP BY date, hour;';
+
+		$mtsHours = mysqli_fetch_all(mysqli_query($connection, $queryMtsHours));
 	}
 ?>
 
@@ -169,7 +208,7 @@
                 	data: [
                 		<?php
                 			$sum = 0;
-                			foreach ($VALUE_ALL as $value)
+                			foreach ($BEELINE_VALUE_ALL as $value)
                 			{
                 				if ($sum == $rowCount[0][0] - 1)
                 				{
@@ -189,15 +228,15 @@
             		data: [
             			<?php
                 			$sum = 0;
-                			foreach ($VALUE_ALL as $value)
+                			foreach ($MF_VALUE_ALL as $value)
                 			{
                 				if ($sum == $rowCount[0][0] - 1)
                 				{
-                					echo '[' . $timeStampArray[$sum] . ',' . $value[1] . ']';
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . ']';
                 				}
                 				else
                 				{
-                					echo '[' . $timeStampArray[$sum] . ',' . $value[1] . '],';
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . '],';
                 					$sum++;
                 				}
                 			};
@@ -209,15 +248,15 @@
             		data: [
             			<?php
                 			$sum = 0;
-                			foreach ($VALUE_ALL as $value)
+                			foreach ($MTS_VALUE_ALL as $value)
                 			{
                 				if ($sum == $rowCount[0][0] - 1)
                 				{
-                					echo '[' . $timeStampArray[$sum] . ',' . $value[2] . ']';
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . ']';
                 				}
                 				else
                 				{
-                					echo '[' . $timeStampArray[$sum] . ',' . $value[2] . '],';
+                					echo '[' . $timeStampArray[$sum] . ',' . $value[0] . '],';
                 					$sum++;
                 				}
                 			};
@@ -258,13 +297,13 @@
             	color: 'yellow',
             	data: [
             		<?php
-                		foreach ($allMinutes as $allMinute)
+                		foreach ($beelineMinutes as $beelineMinute)
 						{
-							$totalValue = $allMinute[3];
-							$requestCount = $allMinute[6];
+							$totalValue = $beelineMinute[3];
+							$requestCount = $beelineMinute[4];
 							$average = $totalValue / $requestCount;
 
-							$time = $allMinute[0] . ' ' . $allMinute[1] . ':' . $allMinute[2];
+							$time = $beelineMinute[0] . ' ' . $beelineMinute[1] . ':' . $beelineMinute[2];
 
 							$timeEntity = strtotime($time);
 							$timeEntity += 10800;
@@ -279,13 +318,13 @@
             	color: 'green',
             	data: [
             		<?php
-                		foreach ($allMinutes as $allMinute)
+                		foreach ($megafonMinutes as $megafonMinute)
 						{
-							$totalValue = $allMinute[4];
-							$requestCount = $allMinute[6];
+							$totalValue = $megafonMinute[3];
+							$requestCount = $megafonMinute[4];
 							$average = $totalValue / $requestCount;
 
-							$time = $allMinute[0] . ' ' . $allMinute[1] . ':' . $allMinute[2];
+							$time = $megafonMinute[0] . ' ' . $megafonMinute[1] . ':' . $megafonMinute[2];
 
 							$timeEntity = strtotime($time);
 							$timeEntity += 10800;
@@ -300,13 +339,13 @@
             	color: 'red',
             	data: [
             		<?php
-                		foreach ($allMinutes as $allMinute)
+                		foreach ($mtsMinutes as $mtsMinute)
 						{
-							$totalValue = $allMinute[5];
-							$requestCount = $allMinute[6];
+							$totalValue = $mtsMinute[3];
+							$requestCount = $mtsMinute[4];
 							$average = $totalValue / $requestCount;
 
-							$time = $allMinute[0] . ' ' . $allMinute[1] . ':' . $allMinute[2];
+							$time = $mtsMinute[0] . ' ' . $mtsMinute[1] . ':' . $mtsMinute[2];
 
 							$timeEntity = strtotime($time);
 							$timeEntity += 10800;
@@ -349,13 +388,13 @@
             	color: 'yellow',
             	data: [
             		<?php
-                		foreach ($allHours as $allHour)
+                		foreach ($beelineHours as $beelineHour)
 						{
-							$totalValue = $allHour[2];
-							$requestCount = $allHour[5];
+							$totalValue = $beelineHour[2];
+							$requestCount = $beelineHour[3];
 							$average = $totalValue / $requestCount;
 
-							$time = $allHour[0] . ' ' . $allHour[1] . ':00';
+							$time = $beelineHour[0] . ' ' . $beelineHour[1] . ':00';
 
 							$timeEntity = strtotime($time);
 							$timeEntity *= 1000;
@@ -369,13 +408,13 @@
             	color: 'green',
             	data: [
             		<?php
-                		foreach ($allHours as $allHour)
+                		foreach ($megafonHours as $megafonHour)
 						{
-							$totalValue = $allHour[3];
-							$requestCount = $allHour[5];
+							$totalValue = $megafonHour[2];
+							$requestCount = $megafonHour[3];
 							$average = $totalValue / $requestCount;
 
-							$time = $allHour[0] . ' ' . $allHour[1] . ':00';
+							$time = $megafonHour[0] . ' ' . $megafonHour[1] . ':00';
 
 							$timeEntity = strtotime($time);
 							$timeEntity *= 1000;
@@ -389,13 +428,13 @@
             	color: 'red',
             	data: [
             		<?php
-                		foreach ($allHours as $allHour)
+                		foreach ($mtsHours as $mtsHour)
 						{
-							$totalValue = $allHour[4];
-							$requestCount = $allHour[5];
+							$totalValue = $mtsHour[2];
+							$requestCount = $mtsHour[3];
 							$average = $totalValue / $requestCount;
 
-							$time = $allHour[0] . ' ' . $allHour[1] . ':00';
+							$time = $mtsHour[0] . ' ' . $mtsHour[1] . ':00';
 
 							$timeEntity = strtotime($time);
 							$timeEntity *= 1000;
@@ -437,13 +476,13 @@
             	color: 'yellow',
             	data: [
             		<?php
-                		foreach ($allDays as $allDay)
+                		foreach ($beelineDays as $beelineDay)
 						{
-							$totalValue = $allDay[1];
-							$requestCount = $allDay[4];
+							$totalValue = $beelineDay[1];
+							$requestCount = $beelineDay[2];
 							$average = $totalValue / $requestCount;
 
-							$timeEntity = strtotime($allDay[0]);
+							$timeEntity = strtotime($beelineDay[0]);
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
@@ -455,13 +494,13 @@
             	color: 'green',
             	data: [
             		<?php
-                		foreach ($allDays as $allDay)
+                		foreach ($megafonDays as $megafonDay)
 						{
-							$totalValue = $allDay[2];
-							$requestCount = $allDay[4];
+							$totalValue = $megafonDay[1];
+							$requestCount = $megafonDay[2];
 							$average = $totalValue / $requestCount;
 
-							$timeEntity = strtotime($allDay[0]);
+							$timeEntity = strtotime($megafonDay[0]);
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
@@ -473,13 +512,13 @@
             	color: 'red',
             	data: [
             		<?php
-                		foreach ($allDays as $allDay)
+                		foreach ($mtsDays as $mtsDay)
 						{
-							$totalValue = $allDay[3];
-							$requestCount = $allDay[4];
+							$totalValue = $mtsDay[1];
+							$requestCount = $mtsDay[2];
 							$average = $totalValue / $requestCount;
 
-							$timeEntity = strtotime($allDay[0]);
+							$timeEntity = strtotime($mtsDay[0]);
 							$timeEntity *= 1000;
 
 							echo '[' . $timeEntity . ',' . $average . '],';
