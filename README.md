@@ -13,3 +13,7 @@
 * phpMyAdmin
 * Github
 * InfinityFree.net
+
+### Примеры:
+
+![1](/screenshots.1.jpg)
