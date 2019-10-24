@@ -53,7 +53,7 @@
 
 		// 3) Visualizing data.
 
-		$queryTimeKey = 'SELECT TIME_KEY FROM data';
+		$queryTimeKey = 'SELECT TIME_KEY FROM data;';
 
 		$timeKeyAll = mysqli_fetch_all(mysqli_query($connection, $queryTimeKey));
 
@@ -70,6 +70,8 @@
 		$queryRowCount = 'SELECT COUNT(*) FROM data;';
 
 		$rowCount = mysqli_fetch_all(mysqli_query($connection, $queryRowCount));
+
+
 
         // Retrieving all data for all operators in one query.
 
