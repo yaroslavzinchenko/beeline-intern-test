@@ -16,4 +16,7 @@
 
 ### Примеры:
 
-![1](/screenshots.1.jpg)
+![1](https://raw.githubusercontent.com/yaroslavzinchenko/beeline-intern-test/master/screenshots/1.jpg)
+![2](https://raw.githubusercontent.com/yaroslavzinchenko/beeline-intern-test/master/screenshots/2.jpg)
+![3](https://raw.githubusercontent.com/yaroslavzinchenko/beeline-intern-test/master/screenshots/3.jpg)
+![4](https://raw.githubusercontent.com/yaroslavzinchenko/beeline-intern-test/master/screenshots/4.jpg)
