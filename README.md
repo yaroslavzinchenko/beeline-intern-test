@@ -12,3 +12,4 @@
 * MySQL
 * phpMyAdmin
 * Github
+* InfinityFree.net
